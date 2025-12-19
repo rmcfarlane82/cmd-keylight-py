@@ -1,0 +1,4 @@
+{
+  "include": ["src", "keylights.py"],
+  "extraPaths": ["src"]
+}
