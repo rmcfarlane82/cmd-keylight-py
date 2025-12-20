@@ -48,6 +48,7 @@ python keylights.py toggle
 ## Usage
 
 ```bash
+keylights
 keylights on
 keylights off
 keylights toggle
@@ -90,3 +91,5 @@ source ~/.bashrc
 ```
 
 If you use zsh, replace `~/.bashrc` with `~/.zshrc`.
+
+you may need to make the keylights executable on linux `chmod +x keylights.py`
