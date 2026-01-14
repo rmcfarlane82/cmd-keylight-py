@@ -1,95 +1,81 @@
-# Keylights
+# cmd-keylights-py
 
-Control Elgato Key Lights from the command line with a simple Python script and a JSON config.
+Simple CLI for controlling Elgato Key Lights from the terminal.
 
-## Files
+## Config
 
-- `keylights.py`: entry point wrapper (runs the package in `src/`)
-- `src/keylights/`: implementation modules
-- `keylights.conf`: JSON config with your light aliases
+Create a config file at:
 
-Example config:
+- Linux: `~/.config/cmd-keylights-py/keylights.conf`
+- Windows: `~/AppData/Local/cmd-keylights-py/keylights.json`
 
 ```json
 {
+  "defaults": {
+    "port": 9123,
+    "timeout": 5
+  },
   "lights": [
-    { "alias": "one", "host": "192.168.1.50", "port": 9123 },
-    { "alias": "two", "host": "192.168.1.51" }
+    { "alias": "left", "host": "192.168.1.5" },
+    { "alias": "right", "host": "192.168.1.6", "port": 1234 }
   ]
 }
 ```
 
-## Quick start
-
-```bash
-git clone <your-repo-url>
-cd pykeylight
-```
-
-Create `keylights.conf`:
-
-```json
-{
-  "lights": [
-    { "alias": "left", "host": "192.168.1.50", "port": 9123 },
-    { "alias": "right", "host": "192.168.1.51" }
-  ]
-}
-```
-
-Run it:
-
-```bash
-python keylights.py on
-python keylights.py left -a on
-python keylights.py toggle
-```
+Per-light `port` and `timeout` values override defaults.
 
 ## Usage
 
+Examples:
+
 ```bash
-keylights
-keylights on
-keylights off
-keylights toggle
-keylights left -a on
-keylights right off
+python -m src.main
+python -m src.main left -t 3000 -b 10
+python -m src.main -t 2000 -b 20
+python -m src.main --show-config
+python -m src.main --print-config-template
 ```
 
-## Add a global command
+Behavior:
 
-### Windows Terminal (PowerShell profile)
+- `keylights` with no switches toggles power.
+- Provide an alias to target a single light.
+- Omit an alias to target all lights.
 
-Edit your PowerShell profile and add a function that calls the script. Replace the paths.
+## Terminal shortcuts
 
-```powershell
-function keylights {
-    & py -3 "C:\path\to\keylights.py" --config "C:\path\to\keylights.conf" @args
+Linux/macOS (zsh/bash):
+
+```bash
+lights() {
+  python3 ~/Git/cmd-keylights-py/src/main.py --config ~/.config/cmd-keylights-py/keylights.conf "$@"
 }
 ```
 
-Apply changes:
-
-```powershell
-. $PROFILE
-```
-
-### kitty (macOS/Linux)
-
-Add a shell function in your profile (for bash/zsh). Replace the paths.
+There is a shebang (`#!/usr/bin/env python3`) in the `src/main.py`, you can `chmod +x` the main.py, then you can call it directly:
 
 ```bash
-keylights() {
-  /path/to/keylights.py --config /path/to/keylights.conf "$@"
+lights() {
+  ~/[YOUR_PATH]/cmd-keylights-py/src/main.py --config ~/.config/cmd-keylights-py/keylights.conf "$@"
 }
 ```
 
-Reload your shell:
+Windows (PowerShell):
 
-```bash
-source ~/.bashrc
+```powershell
+function lights {
+  python "$HOME\[YOUR_PATH]\cmd-keylights-py\src\main.py" --config "$HOME\AppData\Local\cmd-keylights-py\keylights.json" @args
+}
 ```
 
-If you use zsh, replace `~/.bashrc` with `~/.zshrc`.
+Once added to your terminal you can run:
 
-you may need to make the keylights executable on linux `chmod +x keylights.py`
+```bash
+lights 
+lights -b 50
+lights -t 4500
+lights -b 20 -t 5000
+lights left -b 10 -t 2500
+```
+
+and so on. enjoy
